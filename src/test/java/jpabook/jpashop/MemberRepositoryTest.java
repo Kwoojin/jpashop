@@ -18,7 +18,7 @@ public class MemberRepositoryTest {
 
     @Test
     @Transactional
-//    @Rollback(false)
+    @Rollback(false)
     public void testMember() {
         //given
         Member member = new Member();
@@ -31,5 +31,6 @@ public class MemberRepositoryTest {
         //then
         assertThat(findMember.getId()).isEqualTo(member.getId());
         assertThat(findMember.getUsername()).isEqualTo(member.getUsername());
+        assertThat(findMember).isEqualTo(member);
     }
 }
