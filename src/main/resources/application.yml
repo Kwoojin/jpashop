@@ -7,11 +7,13 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create  #recreate
+      ddl-auto: create #recreate
     properties:
       hibernate:
-#        show_sql: true  #System log
+        show_sql: true #System log
         format_sql: true
 
-logging.level:
-    org.hibernate.SQL: debug
+logging:
+  level:
+    org.hibernate.sql: debug
+#    org.hibernate.type: trace
