@@ -22,4 +22,7 @@ public class Delivery {
     @Enumerated(EnumType.STRING)
     private DeliveryStatus status; //READY, COMP
 
+    protected void setOrder(Order order) {
+        this.order = order;
+    }
 }
