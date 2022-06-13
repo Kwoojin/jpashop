@@ -8,7 +8,7 @@ import javax.persistence.Entity;
 
 @Entity
 @DiscriminatorValue("A")
-@Getter @Setter
+@Getter
 public class Album extends Item {
 
     private String artist;
