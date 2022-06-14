@@ -28,4 +28,13 @@ public class OrderItem {
     protected void setOrder(Order order) {
         this.order = order;
     }
+
+    //==비즈니스 로직==/
+    public void cancel() {
+        item.addStock(count);
+    }
+
+    public int getTotalPrice() {
+        return orderPrice * count;
+    }
 }

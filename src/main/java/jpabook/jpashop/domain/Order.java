@@ -1,16 +1,21 @@
 package jpabook.jpashop.domain;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import org.aspectj.weaver.ast.Or;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "orders")
 @Getter
+//@Builder
+//@AllArgsConstructor
+//@NoArgsConstructor
 public class Order {
 
     @Id @GeneratedValue
@@ -48,5 +53,61 @@ public class Order {
         this.delivery = delivery;
         delivery.setOrder(this);
     }
+
+    private void setStatus(OrderStatus status) {
+        this.status = status;
+    }
+
+    private void setOrderDate(LocalDateTime orderDate) {
+        this.orderDate = orderDate;
+    }
+
+    //==생성 메서드==//
+    public static Order createOrder(Member member, Delivery delivery, OrderItem... orderItems) {
+        /*return builder()
+                .member(member)
+                .delivery(delivery)
+                .orderItems(Arrays.stream(orderItems).collect(Collectors.toList()))
+                .status(OrderStatus.ORDER)
+                .orderDate(LocalDateTime.now())
+                .build();*/
+
+        Order order = new Order();
+        order.setMember(member);
+        order.setDelivery(delivery);
+        Arrays.stream(orderItems).forEach(order::addOrderItem);
+        order.setStatus(OrderStatus.ORDER);
+        order.setOrderDate(LocalDateTime.now());
+        return order;
+    }
+
+    //==비즈니스 로직==/
+    /**
+     * 주문 취소
+     */
+    public void cancel() {
+        if(delivery.getStatus() == DeliveryStatus.COMP) {
+            throw new IllegalStateException("이미 배송완료된 상품은 취소가 불가능합니다.");
+        }
+
+        status = OrderStatus.CANCEL;
+        for (OrderItem orderItem : this.orderItems) {
+            orderItem.cancel();
+        }
+    }
+
+    //==조회 로직==/
+
+    /**
+     * 전체 주문 가격 조회
+     */
+    public int getTotalPrice() {
+        return orderItems
+                .stream()
+                .mapToInt(OrderItem::getTotalPrice)
+                .sum();
+    }
+
+
 
 }
