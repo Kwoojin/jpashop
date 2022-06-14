@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @Getter
 //@Builder
 //@AllArgsConstructor
-//@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Order {
 
     @Id @GeneratedValue
