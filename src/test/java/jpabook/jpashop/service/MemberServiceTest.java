@@ -28,7 +28,9 @@ public class MemberServiceTest {
 //    @Rollback(value = false)
     public void 회원가입() {
         //given
-        Member member = new Member("kim");
+        Member member = Member.builder()
+                .name("kim")
+                .build();
 
         //when
         Long saveId = memberService.join(member);
@@ -40,8 +42,8 @@ public class MemberServiceTest {
 
     @Test//(expected = IllegalStateException.class)
     public void 중복_회원_예외() throws Exception {
-        Member member1 = new Member("kim");
-        Member member2 = new Member("kim");
+        Member member1 = Member.builder().name("kim").build();
+        Member member2 = Member.builder().name("kim").build();
 
         memberService.join(member1);
 //        memberService.join(member2);
