@@ -10,7 +10,6 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
 public class Member {
 
     @Id @GeneratedValue
@@ -25,4 +24,12 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private List<Order> orders = new ArrayList<>();
 
+    public Member(String name) {
+        this.name = name;
+    }
+
+    public Member(String name, Address address) {
+        this.name = name;
+        this.address = address;
+    }
 }
