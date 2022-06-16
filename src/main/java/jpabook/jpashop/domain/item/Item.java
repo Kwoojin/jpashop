@@ -49,6 +49,12 @@ public abstract class Item {
         this.stockQuantity += quantity;
     }
 
+    public void changeItem(String name, int price, int stockQuantity) {
+        this.name = name;
+        this.price = price;
+        this.stockQuantity = stockQuantity;
+    }
+
     /**
      * stock 감소
      */
