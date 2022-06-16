@@ -21,4 +21,12 @@ public class Book extends Item {
         this.author = author;
         this.isbn = isbn;
     }
+
+    public Book(Long id, String name, int price, int stockQuantity, String author, String isbn) {
+        super(id, name, price, stockQuantity);
+        this.author = author;
+        this.isbn = isbn;
+    }
+
+
 }

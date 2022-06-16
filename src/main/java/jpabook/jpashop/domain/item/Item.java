@@ -13,6 +13,7 @@ import java.util.List;
 @DiscriminatorColumn(name = "dtype")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public abstract class Item {
 
     @Id @GeneratedValue
@@ -24,6 +25,13 @@ public abstract class Item {
     private int stockQuantity;
 
     public Item(String name, int price, int stockQuantity){
+        this.name = name;
+        this.price = price;
+        this.stockQuantity = stockQuantity;
+    }
+
+    public Item(Long id, String name, int price, int stockQuantity) {
+        this.id = id;
         this.name = name;
         this.price = price;
         this.stockQuantity = stockQuantity;
