@@ -66,7 +66,7 @@ public class ItemController {
      * 권한을 체크할 수 있는 방법이 있어야함
      */
     @PostMapping("/{itemId}/edit")
-    public String updateItem(@PathVariable String itemId, @ModelAttribute("form") BookForm form) {
+    public String updateItem(@PathVariable Long itemId, @ModelAttribute("form") BookForm form) {
         UpdateBookDto bookDto = UpdateBookDto.updateBookAll(
                 form.getName(),
                 form.getPrice(),
@@ -75,11 +75,9 @@ public class ItemController {
                 form.getIsbn()
         );
 
-        itemService.updateItem(form.getId(), bookDto);
+        itemService.updateItem(itemId, bookDto);
         return "redirect:/items";
     }
-
-
 }
 
 
