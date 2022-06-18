@@ -54,6 +54,7 @@ public class InitDb {
 
             Delivery delivery = Delivery.builder()
                     .address(member.getAddress())
+                    .status(DeliveryStatus.READY)
                     .build();
             Order order = Order.createOrder(member, delivery, orderItem1, orderItem2);
             em.persist(order);
@@ -74,6 +75,7 @@ public class InitDb {
 
             Delivery delivery = Delivery.builder()
                     .address(member.getAddress())
+                    .status(DeliveryStatus.READY)
                     .build();
             Order order = Order.createOrder(member, delivery, orderItem1, orderItem2);
             em.persist(order);
@@ -88,14 +90,14 @@ public class InitDb {
         }
 
         private Book createBook(String name, int price, String author, String isbn, int stockQuantity) {
-            Book book2 = Book.builder()
+            Book book = Book.builder()
                     .name(name)
                     .price(price)
                     .stockQuantity(stockQuantity)
                     .author(author)
                     .isbn(isbn)
                     .build();
-            return book2;
+            return book;
         }
 
 
