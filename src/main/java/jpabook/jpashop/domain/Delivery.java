@@ -7,8 +7,6 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 public class Delivery {
 
     @Id @GeneratedValue
@@ -23,6 +21,13 @@ public class Delivery {
 
     @Enumerated(EnumType.STRING)
     private DeliveryStatus status; //READY, COMP
+
+    @Builder
+    public Delivery(Order order, Address address, DeliveryStatus status) {
+        this.order = order;
+        this.address = address;
+        this.status = status;
+    }
 
     protected void setOrder(Order order) {
         this.order = order;
