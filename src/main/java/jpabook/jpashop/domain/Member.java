@@ -9,7 +9,6 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class Member {
 
     @Id @GeneratedValue
@@ -28,6 +27,7 @@ public class Member {
         this.name = name;
     }
 
+    @Builder
     public Member(String name, Address address) {
         this.name = name;
         this.address = address;
