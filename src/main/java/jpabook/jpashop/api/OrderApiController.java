@@ -45,6 +45,19 @@ public class OrderApiController {
                 .collect(toList()));
     }
 
+    /**
+     * 1:N 조회 시 Fetch Join을 사용할 경우에
+     * 페이징 불가능
+     * 페이징 사용할 경우 메모리를 사용하여 페이징 처리가 적용이 됨
+     */
+    @GetMapping("/api/v3/orders")
+    public Result orderV3() {
+        return new Result<>(orderRepository.findAllWithItem()
+                .stream()
+                .map(OrderDto::createOrderDto)
+                .collect(toList()));
+    }
+
 
     @Getter
     static class OrderDto {

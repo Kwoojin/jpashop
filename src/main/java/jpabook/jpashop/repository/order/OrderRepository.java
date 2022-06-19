@@ -100,4 +100,19 @@ public class OrderRepository {
     }
 
 
+    /**
+     * JPA Distinct
+     * 1. DB Distinct
+     * 2. root 객체 기준 중복 제거
+     */
+    public List<Order> findAllWithItem() {
+        return em.createQuery(
+                "select distinct o from Order o" +
+                        " join fetch o.member m" +
+                        " join fetch o.delivery" +
+                        " join fetch o.orderItems oi" +
+                        " join fetch oi.item i",
+                Order.class
+        ).getResultList();
+    }
 }
