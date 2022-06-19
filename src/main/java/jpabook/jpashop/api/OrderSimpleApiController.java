@@ -3,8 +3,10 @@ package jpabook.jpashop.api;
 import jpabook.jpashop.domain.Address;
 import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.domain.OrderStatus;
-import jpabook.jpashop.repository.OrderRepository;
+import jpabook.jpashop.repository.order.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
+import jpabook.jpashop.repository.order.simplequery.OrderSimpleQueryDto;
+import jpabook.jpashop.repository.order.simplequery.OrderSimpleQueryRepository;
 import lombok.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,12 +21,18 @@ import java.util.stream.Collectors;
  * Order
  * Order -> Member
  * Order -> Delivery
+ *
+ * 1. Entity -> DTO 변환
+ * 2. 필요 시 Fetch Join 성능 최적화 ( 대부분 성능 이슈 해결 )
+ * 3. 더 필요하다면 DTO로 조회하는 방법 사용
+ * 4. 최후의 방법 JPA(Native SQL) 또는 SQL Mapper
  */
 @RestController
 @RequiredArgsConstructor
 public class OrderSimpleApiController {
 
     private final OrderRepository orderRepository;
+    private final OrderSimpleQueryRepository orderSimpleQueryRepository;
 
     /**
      * 엔티티를 직접 노출할 경우, 한 곳은 @JsonIgnore 처리 필수(무한 루프 발생함)
@@ -55,6 +63,30 @@ public class OrderSimpleApiController {
         return Result.builder().data(result).build();
     }
 
+    /**
+     * fetch join 으로 인한 성능 향상
+     */
+    @GetMapping("/api/v3/simple-orders")
+    public Result orderV3() {
+        List<SimpleOrderDto> result = orderRepository.findAllWithMemberDelivery()
+                .stream()
+                .map(SimpleOrderDto::createSimpleOrderDto)
+                .collect(Collectors.toList());
+
+        return Result.builder().data(result).build();
+    }
+
+    /**
+     * select 간소화(성능 최적화)
+     * 재사용성 x
+     * [ v3 <-> v4 ]  간 트레이드 오프
+     */
+    @GetMapping("/api/v4/simple-orders")
+    public Result orderV4() {
+        List<OrderSimpleQueryDto> result = orderSimpleQueryRepository.findOrderDtos();
+        return Result.builder().data(result).build();
+    }
+
     @Data
     @NoArgsConstructor
     static class SimpleOrderDto {
@@ -79,6 +111,7 @@ public class OrderSimpleApiController {
     @Data
     @Builder
     static class Result<T> {
+        private int count;
         private T data;
     }
 }
