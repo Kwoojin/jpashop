@@ -10,7 +10,8 @@ import jpabook.jpashop.repository.order.query.OrderFlatDto;
 import jpabook.jpashop.repository.order.query.OrderItemQueryDto;
 import jpabook.jpashop.repository.order.query.OrderQueryDto;
 import jpabook.jpashop.repository.order.query.OrderQueryRepository;
-import lombok.Data;
+import jpabook.jpashop.service.query.QueryOrderService;
+import jpabook.jpashop.service.query.OrderTestDto;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
 
@@ -31,6 +31,8 @@ public class OrderApiController {
 
     private final OrderRepository orderRepository;
     private final OrderQueryRepository orderQueryRepository;
+
+    private final QueryOrderService queryOrderService;
 
     @GetMapping("/api/v1/orders")
     public List<Order> ordersV1() {
@@ -59,10 +61,23 @@ public class OrderApiController {
      */
     @GetMapping("/api/v3/orders")
     public Result orderV3() {
-        return new Result<>(orderRepository.findAllWithItem()
-                .stream()
+        List<Order> orders = orderRepository.findAllWithItem();
+
+        List<OrderDto> result = orders.stream()
                 .map(OrderDto::createOrderDto)
-                .collect(toList()));
+                .collect(toList());
+
+        return new Result<>(result);
+    }
+
+    /**
+     * orderV3() 에서
+     * open-in-view false 로 수정 시
+     */
+    @GetMapping("/api/v3/orders-oiv")
+    public Result orderV3_oiv() {
+        List<OrderTestDto> result = queryOrderService.findAllWithItem();
+        return new Result<>(result);
     }
 
     @GetMapping("/api/v3.1/orders")
