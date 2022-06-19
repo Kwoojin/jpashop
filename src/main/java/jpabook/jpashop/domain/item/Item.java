@@ -13,7 +13,6 @@ import java.util.List;
 @DiscriminatorColumn(name = "dtype")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public abstract class Item {
 
     @Id @GeneratedValue
