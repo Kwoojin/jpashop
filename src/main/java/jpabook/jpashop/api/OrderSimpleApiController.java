@@ -5,9 +5,7 @@ import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -51,13 +49,14 @@ public class OrderSimpleApiController {
     public Result orderV2() {
         List<SimpleOrderDto> result = orderRepository.findAll(new OrderSearch())
                 .stream()
-                .map(SimpleOrderDto::new)
+                .map(SimpleOrderDto::createSimpleOrderDto)
                 .collect(Collectors.toList());
 
-        return new Result(result);
+        return Result.builder().data(result).build();
     }
 
     @Data
+    @NoArgsConstructor
     static class SimpleOrderDto {
         private Long orderId;
         private String name;
@@ -65,17 +64,20 @@ public class OrderSimpleApiController {
         private OrderStatus orderStatus;
         private Address address;
 
-        public SimpleOrderDto(Order o) {
-            orderId = o.getId();
-            name = o.getMember().getName();
-            orderDate = o.getOrderDate();
-            orderStatus = o.getStatus();
-            address = o.getDelivery().getAddress();
+        public static SimpleOrderDto createSimpleOrderDto(Order o) {
+            SimpleOrderDto dto = new SimpleOrderDto();
+            dto.orderId = o.getId();
+            dto.name = o.getMember().getName();
+            dto.orderDate = o.getOrderDate();
+            dto.orderStatus = o.getStatus();
+            dto.address = o.getDelivery().getAddress();
+            return dto;
+
         }
     }
 
     @Data
-    @AllArgsConstructor
+    @Builder
     static class Result<T> {
         private T data;
     }
