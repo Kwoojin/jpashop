@@ -14,8 +14,9 @@ spring:
       ddl-auto: create #recreate
     properties:
       hibernate:
-#        show_sql: true #System log
+        show_sql: true #System log
         format_sql: true
+        default_batch_fetch_size: 100
 
 logging:
   level:
