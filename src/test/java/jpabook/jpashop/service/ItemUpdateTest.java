@@ -22,8 +22,8 @@ public class ItemUpdateTest {
 
     @Test
     public void updateTest() {
-        BookTest book = em.find(BookTest.class, 1L);
-        book.setName("JPA2");
+//        BookTest book = em.find(BookTest.class, 1L);
+//        book.setName("JPA2");
     }
 
     @Entity
