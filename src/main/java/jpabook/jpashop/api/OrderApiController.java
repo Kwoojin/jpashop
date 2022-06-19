@@ -6,11 +6,14 @@ import jpabook.jpashop.domain.OrderItem;
 import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderSearch;
 import jpabook.jpashop.repository.order.OrderRepository;
+import jpabook.jpashop.repository.order.query.OrderQueryDto;
+import jpabook.jpashop.repository.order.query.OrderQueryRepository;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
@@ -25,6 +28,7 @@ import static java.util.stream.Collectors.*;
 public class OrderApiController {
 
     private final OrderRepository orderRepository;
+    private final OrderQueryRepository orderQueryRepository;
 
     @GetMapping("/api/v1/orders")
     public List<Order> ordersV1() {
@@ -49,6 +53,7 @@ public class OrderApiController {
      * 1:N 조회 시 Fetch Join을 사용할 경우에
      * 페이징 불가능
      * 페이징 사용할 경우 메모리를 사용하여 페이징 처리가 적용이 됨
+     * 컬렉션 페치 조인은 1개만 사용
      */
     @GetMapping("/api/v3/orders")
     public Result orderV3() {
@@ -56,6 +61,25 @@ public class OrderApiController {
                 .stream()
                 .map(OrderDto::createOrderDto)
                 .collect(toList()));
+    }
+
+    @GetMapping("/api/v3.1/orders")
+    public Result orderV3_page(
+            @RequestParam(value = "offset", defaultValue = "0") int offset,
+            @RequestParam(value = "limit", defaultValue = "100") int limit)
+    {
+        List<OrderDto> orders = orderRepository.findAllWithMemberDelivery(offset, limit)
+                .stream()
+                .map(OrderDto::createOrderDto)
+                .collect(toList());
+
+        return new Result<>(orders);
+    }
+
+    @GetMapping("/api/v4/orders")
+    public Result orderV4() {
+        List<OrderQueryDto> orders = orderQueryRepository.findOrderQueryDtos();
+        return new Result<>(orders);
     }
 
 
