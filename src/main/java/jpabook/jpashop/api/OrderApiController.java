@@ -6,6 +6,8 @@ import jpabook.jpashop.domain.OrderItem;
 import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderSearch;
 import jpabook.jpashop.repository.order.OrderRepository;
+import jpabook.jpashop.repository.order.query.OrderFlatDto;
+import jpabook.jpashop.repository.order.query.OrderItemQueryDto;
 import jpabook.jpashop.repository.order.query.OrderQueryDto;
 import jpabook.jpashop.repository.order.query.OrderQueryRepository;
 import lombok.Data;
@@ -76,12 +78,64 @@ public class OrderApiController {
         return new Result<>(orders);
     }
 
+    /**
+     * 데이터 조회 결과가 1건일 경우 유리
+     */
     @GetMapping("/api/v4/orders")
     public Result orderV4() {
         List<OrderQueryDto> orders = orderQueryRepository.findOrderQueryDtos();
         return new Result<>(orders);
     }
 
+    /**
+     * Query : root 1번, 컬렉션 1번
+     * xToOne : join
+     * xToMany : xToOne 에서 얻은 식별자를 통해 MAP을 이용하여  성능 향상
+     * 페이징 가능
+     */
+    @GetMapping("/api/v5/orders")
+    public Result orderV5() {
+        List<OrderQueryDto> orders = orderQueryRepository.findAllByDto_optimization();
+        return new Result<>(orders);
+    }
+
+    /**
+     * 장점 : Query 1번 실행
+     * 단점 :
+     * 1.DB에서 애플리케이션에 중복 데이터가 전달되어 느릴 수 있음
+     * 2.애플리케이션에서 추가 작업이 크며, 페이징 불가능
+     */
+    @GetMapping("/api/v6/orders")
+    public Result orderV6() {
+        List<OrderFlatDto> flats = orderQueryRepository.findAllByDto_flat();
+
+        List<OrderQueryDto> dtos = flats.stream()
+                .collect(groupingBy(
+                        o -> new OrderQueryDto(o.getOrderId(),
+                                o.getName(),
+                                o.getOrderDate(),
+                                o.getOrderStatus(),
+                                o.getAddress()),
+                        mapping(o -> new OrderItemQueryDto(o.getOrderId(),
+                                        o.getItemName(),
+                                        o.getOrderPrice(),
+                                        o.getCount()),
+                                toList()
+                        )
+                ))
+                .entrySet().stream()
+                .map(e -> new OrderQueryDto(
+                        e.getKey().getOrderId(),
+                        e.getKey().getName(),
+                        e.getKey().getOrderDate(),
+                        e.getKey().getOrderStatus(),
+                        e.getKey().getAddress(),
+                        e.getValue()
+                ))
+                .collect(toList());
+
+        return new Result<>(dtos);
+    }
 
     @Getter
     static class OrderDto {
